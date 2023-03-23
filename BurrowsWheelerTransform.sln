@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BurrowsWheelerTransform", "BurrowsWheelerTransform\BurrowsWheelerTransform.csproj", "{A96B11FD-51F7-4F26-9BD0-1D8F84F2D9FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A96B11FD-51F7-4F26-9BD0-1D8F84F2D9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A96B11FD-51F7-4F26-9BD0-1D8F84F2D9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A96B11FD-51F7-4F26-9BD0-1D8F84F2D9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A96B11FD-51F7-4F26-9BD0-1D8F84F2D9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
