@@ -6,8 +6,19 @@ public class BWT
     {
         string output = String.Empty;
         var allRotations = MakeAllRotations(input);
+        var sorted = LexographicsSort(allRotations);
         return output;
     }
+
+    private string[] LexographicsSort(string[] toSort)
+    {
+        var sorted = toSort;
+        
+        
+        
+        return sorted;
+    }
+    
 
     private string[] MakeAllRotations(string input)
     {
@@ -26,9 +37,7 @@ public class BWT
 
     private string Rotate(string input)
     {
-        
         char[] output = input.ToCharArray();
-        
         char replacer = output[0];
         char temp;
         for (int i = 0; i < output.Length; i++)
