@@ -1,13 +1,15 @@
-﻿namespace BurrowsWheelerTransform;
+﻿using System.Collections;
 
-public class BWT
+namespace BurrowsWheelerTransform;
+
+public class Bwt
 {
     public string Transform(string input)
     {
-        string output = String.Empty;
-        var data = input.ToLower();
+        var output = string.Empty;
+        var data = input+"$";
         var allRotations = MakeAllRotations(data);
-        var sorted = LexographicsSort(allRotations);
+        var sorted = LexographicsSort(allRotations, 0);
         foreach (var rotation in sorted)
         {
             output += rotation[^1];
@@ -15,77 +17,90 @@ public class BWT
 
         return output;
     }
-
-    private string[] LexographicsSort(string[] toSort)
+    
+    public string DeTransform(string input)
     {
-        var data = toSort;
-        char minChar = char.MaxValue;
-        var selectedIndex = 0;
-        List<int[]> areas = new List<int[]>();
-        char actualSortedChar = Char.MaxValue;
-        int areaStart = 0;
-        for (int i = 0; i < data[0].Length; i++)
+        var letters = new string[input.Length];
+        for (var s = 0; s < input.Length; s++)
         {
-            for (int l = 0; l < areas.Count; l++)
+            for (var i = 0; i < letters.Length; i++)
             {
-                for (int j = 0; j < data.Length; j++)
-                {
-                    for (int k = j; k < data.Length; k++)
-                    {
-                        if (data[k][i] <= minChar)
-                        {
-                            selectedIndex = k;
-                            minChar = data[k][i];
-                        }
-                    }
-
-                    minChar = char.MaxValue;
-
-                    if (actualSortedChar != char.MaxValue)
-                    {
-                        if (actualSortedChar != data[selectedIndex][i])
-                        {
-                            areas.Add(new []{areaStart, j});
-                            areaStart = j;
-                        }
-                    }
-                    else
-                    {
-                        actualSortedChar = data[selectedIndex][i];
-                    }
-
-                    if (ArePreviousLettersSame(data, j, selectedIndex, i))
-                        (data[j], data[selectedIndex]) = (data[selectedIndex], data[j]);
-                }
-
-                selectedIndex = 0;
+                letters[i] = input[i]+letters[i];
             }
 
-            areas.Clear();
+            letters = LexographicsSort(letters, 0);
         }
 
-        return data;
+        var output = letters.First(x => x[^1] == '$');
+        return output[..^1];
     }
 
-    private bool ArePreviousLettersSame(string[] data, int baseIndex, int selectedIndex, int level)
+    private string[] LexographicsSort(string[] toSort, int level)
     {
-        for (int i = 0; i < level; i++)
+        SelectionSort(level, toSort);
+        
+        if (level + 1 == toSort[0].Length)
+            return toSort;
+        
+        var groups = DivideToGroupsWithSameLettersOnLevel(toSort, level);
+        var output = new List<string>();
+       
+        foreach (var group in groups)
         {
-            if (data[baseIndex][i] != data[selectedIndex][i])
-                return false;
+            var sorted = LexographicsSort(group.ToArray(), level + 1);
+            output.AddRange(sorted);
         }
 
-        return true;
+        return output.ToArray();
     }
 
+    private static void SelectionSort(int level, string[] data)
+    {
+        char minChar = char.MaxValue;
+        var selectedIndex = 0;
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            for (int k = i; k < data.Length; k++)
+            {
+                if (data[k][level] <= minChar)
+                {
+                    selectedIndex = k;
+                    minChar = data[k][level];
+                }
+            }
+
+            minChar = char.MaxValue;
+            (data[i], data[selectedIndex]) = (data[selectedIndex], data[i]);
+        }
+    }
+
+    private List<List<string>> DivideToGroupsWithSameLettersOnLevel(string[] arrays, int level)
+    {
+        var output = new List<List<string>>();
+        var actualCollection = new List<string> { arrays[0] };
+        for (var i = 1; i < arrays.Length; i++)
+        {
+            if (arrays[i][level] != actualCollection[0][level])
+            {
+                output.Add(actualCollection);
+                actualCollection = new List<string>();
+            }
+
+            actualCollection.Add(arrays[i]);
+        }
+        output.Add(actualCollection);
+
+        return output;
+    }
 
     private string[] MakeAllRotations(string input)
     {
         var rotations = new string[input.Length];
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
             rotations[i] = input;
-            for (int j = 0; j < i; j++)
+            for (var j = 0; j < i; j++)
             {
                 rotations[i] = Rotate(rotations[i]);
             }
@@ -96,29 +111,19 @@ public class BWT
 
     private string Rotate(string input)
     {
-        char[] output = input.ToCharArray();
-        char replacer = output[0];
-        char temp;
-        for (int i = 0; i < output.Length; i++)
+        var output = input.ToCharArray();
+        var replacer = output[^1];
+        for (var i = output.Length - 1; i >= 0; i--)
         {
-            if (i == output.Length - 1)
+            if (i == 0)
             {
-                output[0] = replacer;
+                output[^1] = replacer;
                 break;
             }
 
-            temp = output[i + 1];
-            output[i + 1] = replacer;
-            replacer = temp;
+            (output[i - 1], replacer) = (replacer, output[i - 1]);
         }
 
         return new string(output);
-    }
-
-    public string DeTransform(string input)
-    {
-        string output = String.Empty;
-
-        return output;
     }
 }
